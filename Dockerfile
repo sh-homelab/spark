@@ -28,7 +28,7 @@ LABEL branch=$GIT_BRANCH \
       comp.dockerize.version=$DOCKERIZE_VERSION \
       image.tag=$IMAGE_TAG
 
-SHELL ["/bin/sh", "-o", "pipefail", "-c"]
+SHELL ["/bin/ash", "-o", "pipefail", "-c"]
 
 RUN set -eux; \
     apk add --no-cache \
@@ -46,7 +46,7 @@ RUN set -eux; \
     gpg --verify spark.tgz.asc spark.tgz; \
     tar -xzf spark.tgz -C /tmp; \
     rm -rf "$GNUPGHOME" spark.tgz spark.tgz.asc KEYS; \
-    mv "/tmp/spark-${SPARK_VERSION}-bin-hadoop$HADOOP_VERSION" $SPARK_HOME; \
+    mv /tmp/spark-${SPARK_VERSION}-bin-hadoop$HADOOP_VERSION/* $SPARK_HOME/; \
     wget -q -P $SPARK_EXTERNAL_JARS \
         https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/${AWS_SDK_VERSION}/aws-java-sdk-bundle-${AWS_SDK_VERSION}.jar \
         https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/$HADOOP_AWS_VERSION/hadoop-aws-$HADOOP_AWS_VERSION.jar; \

@@ -1,0 +1,30 @@
+
+version: "3.7"
+
+services:
+  spark-master:
+    image: sh-homelab/spark:3.0.1-hadoop-3.2
+    hostname:  spark-master
+    ports:
+      - "8080:8080"
+      - "4040:4040"
+      - "7077:7077"
+    environment:
+      SPARK_MASTER_HOST: spark-master
+      SPARK_HOME:  /opt/spark
+      SPARK_WORKER_DIR: /tmp 
+    entrypoint: /start-master.sh 
+
+  spark-worker:
+    image: sh-homelab/spark:3.0.1-hadoop-3.2
+    ports:
+      - "8081:8081"
+    environment:
+      SPARK_HOME:  /opt/spark
+      SPARK_MASTER: spark://spark-master:7077
+      SPARK_WORKER_CORES: 1
+      SPARK_WORKER_MEMORY: 8G
+      SPARK_DRIVER_MEMORY: 128m
+      SPARK_EXECUTOR_MEMORY: 256m
+      SPARK_WORKER_DIR: /tmp
+    entrypoint:  "dockerize -wait tcp://spark-master:7077 -timeout 60s /start-worker.sh" 
